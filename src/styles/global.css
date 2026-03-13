@@ -1,0 +1,119 @@
+/* ============================================
+   GLOBAL STYLES — Lucas Clientes 2026
+   Estética: fondo negro cuadrillé + neon cyan
+   ============================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --cyan:          #00d4ff;
+  --cyan-glow:     rgba(0, 212, 255, 0.4);
+  --cyan-soft:     rgba(0, 212, 255, 0.1);
+  --cyan-border:   rgba(0, 212, 255, 0.3);
+  --blue-electric: #0066ff;
+  --blue-glow:     rgba(0, 102, 255, 0.35);
+  --blue-soft:     rgba(0, 102, 255, 0.1);
+
+  --neon-green:    #00ff88;
+  --neon-green-glow: rgba(0,255,136,0.35);
+  --neon-yellow:   #ffdd00;
+  --neon-yellow-glow: rgba(255,221,0,0.3);
+  --neon-red:      #ff3366;
+  --neon-red-glow: rgba(255,51,102,0.35);
+
+  --bg-base:       #050508;
+  --bg-surface:    rgba(8, 12, 24, 0.92);
+  --bg-surface-2:  rgba(5, 8, 18, 0.95);
+  --bg-card:       rgba(10, 16, 38, 0.85);
+  --bg-hover:      rgba(0, 212, 255, 0.05);
+
+  --border:        rgba(255, 255, 255, 0.06);
+  --border-mid:    rgba(255, 255, 255, 0.1);
+  --border-cyan:   rgba(0, 212, 255, 0.25);
+
+  --text-primary:   #ffffff;
+  --text-secondary: rgba(255,255,255,0.65);
+  --text-muted:     rgba(255,255,255,0.38);
+  --text-faint:     rgba(255,255,255,0.18);
+
+  --font-display: 'Exo 2', 'Rajdhani', sans-serif;
+  --font-body:    'Rajdhani', sans-serif;
+  --font-mono:    'Share Tech Mono', 'Courier New', monospace;
+
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   14px;
+  --radius-pill: 50px;
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+#root { min-height: 100vh; position: relative; }
+
+/* Ambient glow bg */
+#root::before {
+  content: '';
+  position: fixed;
+  top: -15%;
+  left: -5%;
+  width: 55%;
+  height: 55%;
+  background: radial-gradient(ellipse, rgba(0,102,255,0.1) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+#root::after {
+  content: '';
+  position: fixed;
+  bottom: -15%;
+  right: -5%;
+  width: 55%;
+  height: 55%;
+  background: radial-gradient(ellipse, rgba(0,212,255,0.08) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--blue-electric); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+
+input, select, textarea { outline: none; font-family: var(--font-body); }
+input::placeholder, textarea::placeholder { color: var(--text-faint); }
+button { font-family: var(--font-body); cursor: pointer; }
+
+.mono    { font-family: var(--font-mono); }
+.display { font-family: var(--font-display); }
+
+.label-caps {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--cyan);
+  text-shadow: 0 0 12px var(--cyan-glow);
+}
+
+.neon-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--blue-electric), transparent);
+  box-shadow: 0 0 8px var(--cyan-glow);
+  border: none;
+}
