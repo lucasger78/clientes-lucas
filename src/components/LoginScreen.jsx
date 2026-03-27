@@ -160,7 +160,7 @@ export default function LoginScreen({ onLogin, error, setError }) {
                 <div style={{ width:30, height:30, borderRadius:'50%', background:`${u.color}18`, border:`1px solid ${u.color}45`, display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Exo 2',sans-serif", fontWeight:900, fontSize:10, color:u.color, flexShrink:0 }}>{u.initials}</div>
                 <div style={{ flex:1 }}>
                   <div style={{ fontFamily:"'Exo 2',sans-serif", fontSize:13, fontWeight:700, color:'var(--text-primary)' }}>{u.name}</div>
-                  <div style={{ fontFamily:"'Share Tech Mono',monospace", fontSize:10, color:'var(--text-muted)' }}>DNI {u.dni}</div>
+                  {/* <div style={{ fontFamily:"'Share Tech Mono',monospace", fontSize:10, color:'var(--text-muted)' }}>DNI {u.dni}</div> */}
                 </div>
                 <div style={{ fontFamily:"'Exo 2',sans-serif", fontSize:9, fontWeight:700, padding:'3px 10px', borderRadius:20, border:`1px solid ${u.color}35`, background:`${u.color}10`, color:u.color, letterSpacing:1, textTransform:'uppercase' }}>{u.role}</div>
               </div>
