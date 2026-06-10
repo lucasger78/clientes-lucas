@@ -13,9 +13,13 @@ export const MONTH_KEYS = [
 
 export const OBJETIVO_MENSUAL = 2000000
 
-// Empty month data template
+// Empty month data template (all months active with zeros)
 export const emptyMonths = () =>
   Object.fromEntries(MONTH_KEYS.map(k => [k, { monto: 0, cobro: 0 }]))
+
+// Null month template — all months inactive (used for month-independent adds)
+export const nullMonths = () =>
+  Object.fromEntries(MONTH_KEYS.map(k => [k, null]))
 
 // ---- CLIENTES FIJOS (ahora llamados "Clientes") ----
 export const initialClientes = [

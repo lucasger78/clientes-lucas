@@ -1,4 +1,6 @@
 import "./styles/components.css"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 import KPICard        from "./components/KPICard"
 import ClientTable    from "./components/ClientTable"
@@ -22,8 +24,18 @@ const TABS = [
 
 // ── Dashboard (solo usuarios autenticados) ──────────────────
 function Dashboard({ user, onLogout }) {
-  const [selectedMonth, setSelectedMonth] = useState(0)
-  const [activeTab,     setActiveTab]     = useState("planilla")
+  // Persistencia del mes en localStorage por usuario
+  const storageKey = `dashboard_month_${user.id}`
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const saved = localStorage.getItem(storageKey)
+    return saved !== null ? parseInt(saved, 10) : 0
+  })
+  const [activeTab, setActiveTab] = useState("planilla")
+
+  const handleMonthChange = (i) => {
+    setSelectedMonth(i)
+    localStorage.setItem(storageKey, i)
+  }
 
   const {
     clientes, proyectos, events, todos, loading, error,
@@ -115,7 +127,7 @@ function Dashboard({ user, onLogout }) {
           let cls     = "month-btn"
           if (selectedMonth===i) cls += ok ? " month-btn--active-ok" : " month-btn--active-warn"
           return (
-            <button key={m} className={cls} onClick={() => setSelectedMonth(i)}>
+            <button key={m} className={cls} onClick={() => handleMonthChange(i)}>
               {m.slice(0,3)} {ok ? "✓" : ""}
             </button>
           )
@@ -148,8 +160,24 @@ function Dashboard({ user, onLogout }) {
 
         {activeTab === "planilla" && (
           <>
-            <ClientTable title="Clientes"  clients={clientes}  monthKey={mk} onAdd={addCliente}  onUpdate={updateCliente}  onDelete={deleteCliente}  />
-            <ClientTable title="Proyectos" clients={proyectos} monthKey={mk} onAdd={addProyecto} onUpdate={updateProyecto} onDelete={deleteProyecto} />
+            <ClientTable
+              title="Clientes"
+              clients={clientes}
+              monthKey={mk}
+              selectedMonthIndex={selectedMonth}
+              onAdd={(n, scope, fwdKeys) => addCliente(n, mk, scope, fwdKeys)}
+              onUpdate={updateCliente}
+              onDelete={(id, scope, fwdKeys) => deleteCliente(id, mk, scope, fwdKeys)}
+            />
+            <ClientTable
+              title="Proyectos"
+              clients={proyectos}
+              monthKey={mk}
+              selectedMonthIndex={selectedMonth}
+              onAdd={(n, scope, fwdKeys) => addProyecto(n, mk, scope, fwdKeys)}
+              onUpdate={updateProyecto}
+              onDelete={(id, scope, fwdKeys) => deleteProyecto(id, mk, scope, fwdKeys)}
+            />
             <div className="summary-box">
               <div className="summary-grid">
                 {[
@@ -187,5 +215,19 @@ export default function App() {
     return <LoginScreen onLogin={login} error={error} setError={setError} />
   }
 
-  return <Dashboard user={user} onLogout={logout} />
+  return (
+    <>
+      <Dashboard user={user} onLogout={logout} />
+      <ToastContainer
+        position="top-right"
+        autoClose={7000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="dark"
+        style={{ fontFamily: "var(--font-display)", fontSize: 13 }}
+      />
+    </>
+  )
 }

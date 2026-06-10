@@ -5,7 +5,7 @@
 // ============================================================
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './supabaseClient'
-import { emptyMonths } from '../data/initialData'
+import { nullMonths } from '../data/initialData'
 
 // ── helpers internos ────────────────────────────────────────
 const rowToClient = (row) => ({ id: row.id, name: row.name, data: row.data })
@@ -133,10 +133,17 @@ export function useSupabaseSync() {
   // ──────────────────────────────────────────────────────────
   //  CRUD — CLIENTES
   // ──────────────────────────────────────────────────────────
-  const addCliente = async (name) => {
+  // scope: "this" → solo el mes activo | "forward" → mes activo + todos los siguientes
+  // forwardKeys: array de claves de meses desde el activo en adelante (sin meses pasados)
+  const addCliente = async (name, monthKey, scope = 'this', forwardKeys = [monthKey]) => {
+    const keysToActivate = scope === 'forward' ? forwardKeys : [monthKey]
+    const data = {
+      ...nullMonths(),
+      ...Object.fromEntries(keysToActivate.map(k => [k, { monto: 0, cobro: 0 }]))
+    }
     const { error } = await supabase
       .from('clientes')
-      .insert({ name, data: emptyMonths() })
+      .insert({ name, data })
     if (error) console.error('addCliente:', error)
   }
 
@@ -148,18 +155,35 @@ export function useSupabaseSync() {
     if (error) console.error('updateCliente:', error)
   }
 
-  const deleteCliente = async (id) => {
-    const { error } = await supabase.from('clientes').delete().eq('id', id)
-    if (error) console.error('deleteCliente:', error)
+  // Soft-delete por mes. scope: "this" → solo mes activo | "forward" → mes activo + meses siguientes
+  const deleteCliente = async (id, monthKey, scope = 'this', forwardKeys = [monthKey]) => {
+    const client = clientes.find(c => c.id === id)
+    if (!client) return
+    const keysToDelete = scope === 'forward' ? forwardKeys : [monthKey]
+    const newData = { ...client.data }
+    keysToDelete.forEach(k => { newData[k] = null })
+    const allNull = Object.values(newData).every(v => v === null)
+    if (allNull) {
+      const { error } = await supabase.from('clientes').delete().eq('id', id)
+      if (error) console.error('deleteCliente (full):', error)
+    } else {
+      const { error } = await supabase.from('clientes').update({ data: newData }).eq('id', id)
+      if (error) console.error('deleteCliente (month):', error)
+    }
   }
 
   // ──────────────────────────────────────────────────────────
   //  CRUD — PROYECTOS
   // ──────────────────────────────────────────────────────────
-  const addProyecto = async (name) => {
+  const addProyecto = async (name, monthKey, scope = 'this', forwardKeys = [monthKey]) => {
+    const keysToActivate = scope === 'forward' ? forwardKeys : [monthKey]
+    const data = {
+      ...nullMonths(),
+      ...Object.fromEntries(keysToActivate.map(k => [k, { monto: 0, cobro: 0 }]))
+    }
     const { error } = await supabase
       .from('proyectos')
-      .insert({ name, data: emptyMonths() })
+      .insert({ name, data })
     if (error) console.error('addProyecto:', error)
   }
 
@@ -171,9 +195,21 @@ export function useSupabaseSync() {
     if (error) console.error('updateProyecto:', error)
   }
 
-  const deleteProyecto = async (id) => {
-    const { error } = await supabase.from('proyectos').delete().eq('id', id)
-    if (error) console.error('deleteProyecto:', error)
+  // Soft-delete por mes. scope: "this" → solo mes activo | "forward" → mes activo + meses siguientes
+  const deleteProyecto = async (id, monthKey, scope = 'this', forwardKeys = [monthKey]) => {
+    const proyecto = proyectos.find(p => p.id === id)
+    if (!proyecto) return
+    const keysToDelete = scope === 'forward' ? forwardKeys : [monthKey]
+    const newData = { ...proyecto.data }
+    keysToDelete.forEach(k => { newData[k] = null })
+    const allNull = Object.values(newData).every(v => v === null)
+    if (allNull) {
+      const { error } = await supabase.from('proyectos').delete().eq('id', id)
+      if (error) console.error('deleteProyecto (full):', error)
+    } else {
+      const { error } = await supabase.from('proyectos').update({ data: newData }).eq('id', id)
+      if (error) console.error('deleteProyecto (month):', error)
+    }
   }
 
   // ──────────────────────────────────────────────────────────
